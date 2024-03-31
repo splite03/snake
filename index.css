@@ -16,9 +16,10 @@ body {
 	padding: 0;
 	font-family: "Pixelify Sans", sans-serif;
 	font-weight: 700;
+	user-select: none;
 }
 #canvas {
-	background: #577d56;
+	background: #4c8a49;
 }
 .container{
 	display: flex;
@@ -31,7 +32,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 20px 20px;
+	padding: 20px 0;
 }
 button {
 	padding: 6px 12px;
@@ -54,4 +55,7 @@ button.restart {
 }
 button.pause {
 	background: yellow;
+}
+button.pause.paused {
+	background: rgba(183, 255, 0, 0.62);
 }
