@@ -75,7 +75,7 @@ const cellModel = {
 const emptyCellModel = {
     w: cellModel.w,
     h: cellModel.h,
-    fs: '#4c8a49',
+    fs: '#96be02',
     ss: 'rgb(99,99,99)',
     lw: 4,
 };
