@@ -1,3 +1,5 @@
+import {levels} from "./maps.js";
+
 /**
  * HTML Elements
  */
@@ -16,9 +18,11 @@ const ctx = canvas.getContext('2d');
 const mapCells = `
     0 - empty cell
     1 - wall
+    
    -1 - non-reachable space
    -2 - timer
    -3 - points
+   
    41 - left stroke wall
    42 - top stroke wall
    43 - right stroke wall
@@ -27,35 +31,30 @@ const mapCells = `
    46 - top-right stroke wall
    47 - bottom-right stroke wall
    48 - bottom-left stroke wall
+   
+   71 - snake head looking top
+   
+   81 - snake body moving top
+   82 - snake body moving right
+   83 - snake body moving bottom
+   84 - snake body moving left
+   
+   91 - snake tail moving top
+   92 - snake tail moving right
+   93 - snake tail moving bottom
+   94 - snake tail moving left
 `;
 
 /**
+ * Текущий уровень
+ */
+let currentLevel = 1
+;
+/**
  * Карта - двумерный массив [y][x]
  */
-const map = [
-    [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-    [-1,-2,-1,-1,-1,-3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
-    [45,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,42,46],
-    [41,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,43],
-    [41,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,43],
-    [48,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,47],
-];
+let map = getMap(currentLevel);
+
 
 /**
  * Общие параметры
@@ -95,7 +94,7 @@ const wallModel = {
     lw: 4,
 }
 const movementModel = {
-    dir: null,
+    dir: 'top', // top | left | right | bottom
 }
 const timerModel = {
     ct: 0,
@@ -110,7 +109,7 @@ const pointsModel = {
     sc: global.fc,
 }
 const snakeModel = {
-    speed: 1,
+    speed: 10,
 }
 
 /**
@@ -139,15 +138,23 @@ function renderFrame() {
     ctx.fillStyle = emptyCellModel.fs;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    let count = 0;
     map.forEach((yr, y) => {
         yr.forEach((xi, x) => {
             switch (xi) {
                 case 0: // empty cell
+                    /**
+                     * Fill cell main color
+                     * @type {string}
+                     */
                     ctx.fillStyle = emptyCellModel.fs;
-
                     ctx.fillRect(x * cellModel.w, y * cellModel.h, cellModel.w, cellModel.h);
+
+                    /**
+                     * Stroke (for dev)
+                     */
                     ctx.strokeStyle = global.fc;
-                    ctx.lineWidth = emptyCellModel.lw;
+                    ctx.lineWidth = 2 ?? emptyCellModel.lw;
                     ctx.strokeRect(x * cellModel.w, y * cellModel.h, cellModel.w, cellModel.h);
                     break;
                 case 1: // wall
@@ -220,12 +227,20 @@ function renderFrame() {
                         ctx.fillRect(halfs[e].x, halfs[e].y, halfs[e].w, halfs[e].h);
                     })
                     break;
+                case 71: // snake head in 4 dir
+
+                    /* Костыль на пропуск фрейма, чтобы не ловило больше одной головы за рендер в кейса */
+                    count++;
+                    if (count > 1)  return;
+
+                    moveSnake(x, y);
+                    drawHead(x, y);
+                    break;
                 default: // unexpected thing
                     break;
             }
         });
     });
-
     console.log('render');
 }
 
@@ -253,6 +268,9 @@ function render(rerender = false) {
 /**
  * Утилиты
  */
+function getMap(level) {
+    return JSON.parse(JSON.stringify(levels[level]));
+}
 function getTimeDouble(num) {
     return num > 9 ? num : `0${num}`;
 }
@@ -286,6 +304,114 @@ function getHalfs(x, y) {
 }
 
 /**
+ * Snake
+ */
+function drawHead(x, y) {
+    switch (movementModel.dir) {
+        case 'top':
+            ctx.beginPath();
+            ctx.moveTo(x * wallModel.w, y * wallModel.h + cellModel.h);
+            ctx.lineTo(x * wallModel.w, y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.15), y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.15), y * wallModel.h);
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.85), y * wallModel.h);
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.85), y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h + cellModel.h);
+            ctx.fillStyle = wallModel.fs;
+            ctx.fill();
+            break;
+        case 'bottom':
+            ctx.beginPath();
+            ctx.moveTo(x * wallModel.w, y * wallModel.h);
+            ctx.lineTo(x * wallModel.w, y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.15), y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.15), y * wallModel.h + cellModel.h);
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.85), y * wallModel.h + cellModel.h);
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.85), y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h + (cellModel.h * 0.5));
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h);
+            ctx.fillStyle = wallModel.fs;
+            ctx.fill();
+            break;
+        case 'left':
+            ctx.beginPath();
+            ctx.moveTo(x * wallModel.w + cellModel.w, y * wallModel.h);
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h + cellModel.h);
+            ctx.lineTo(x * wallModel.w + cellModel.w * 0.5, y * wallModel.h + cellModel.h);
+            ctx.lineTo(x * wallModel.w + cellModel.w * 0.5, y * wallModel.h + cellModel.h * 0.85);
+            ctx.lineTo(x * wallModel.w, y * wallModel.h + cellModel.h * 0.85);
+            ctx.lineTo(x * wallModel.w, y * wallModel.h + cellModel.h * 0.15);
+            ctx.lineTo(x * wallModel.w + cellModel.w * 0.5, y * wallModel.h + cellModel.h * 0.15);
+            ctx.lineTo(x * wallModel.w + cellModel.w * 0.5, y * wallModel.h);
+            ctx.fillStyle = wallModel.fs;
+            ctx.fill();
+            break;
+        case 'right':
+            ctx.beginPath();
+            ctx.moveTo(x * wallModel.w, y * wallModel.h);
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.5), y * wallModel.h);
+            ctx.lineTo(x * wallModel.w + (cellModel.w * 0.5), y * wallModel.h + cellModel.h * 0.15);
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h + cellModel.h * 0.15);
+            ctx.lineTo(x * wallModel.w + cellModel.w, y * wallModel.h + cellModel.h * 0.85);
+            ctx.lineTo(x * wallModel.w + cellModel.w * 0.5, y * wallModel.h + cellModel.h * 0.85);
+            ctx.lineTo(x * wallModel.w + cellModel.w * 0.5, y * wallModel.h + cellModel.h);
+            ctx.lineTo(x * wallModel.w, y * wallModel.h + cellModel.h);
+            ctx.fillStyle = wallModel.fs;
+            ctx.fill();
+            break;
+    }
+}
+function moveSnake(x, y) {
+    switch (movementModel.dir) {
+        case 'bottom':
+            const isPossibleBottom = map[y + 1] ? map[y + 1][x] !== 1 : false;
+
+            if (isPossibleBottom) {
+                map[y][x] = 0;
+                map[y+1][x] = 71;
+            } else {
+                map[y][x] = 0;
+                map[4][x] = 71;
+            }
+            break;
+        case 'right':
+            const isPossibleRight = map[y][x + 1] !== 1;
+
+            if (isPossibleRight) {
+                map[y][x] = 0;
+                map[y][x + 1] = 71;
+            } else {
+                map[y][x] = 0;
+                map[y][2] = 71;
+            }
+            break;
+        case 'left':
+            const isPossibleLeft = map[y][x - 1] !== 1;
+
+            if (isPossibleLeft) {
+                map[y][x] = 0;
+                map[y][x - 1] = 71;
+            } else {
+                map[y][x] = 0;
+                map[y][map[0].length - 3] = 71;
+            }
+            break;
+        case 'top':
+            const isPossibleTop = map[y - 1][x] !== 1;
+
+            if (isPossibleTop) {
+                map[y][x] = 0;
+                map[y-1][x] = 71;
+            } else {
+                map[y][x] = 0;
+                map[map.length - 3][x] = 71;
+            }
+            break;
+    }
+}
+
+/**
  * Колбеки для кнопок
  */
 function restart () {
@@ -296,6 +422,7 @@ function restart () {
     setup();
 }
 function pause () {
+    console.log(map)
     if (intervalRenderer) { // не на паузе
         clearInterval(intervalRenderer);
         intervalRenderer = null;
@@ -315,6 +442,26 @@ restartButton.addEventListener('click', restart);
 pauseButton.addEventListener('click', pause);
 
 /**
+ * Управление
+ */
+window.addEventListener('keydown', (event) => {
+    switch (event.code) {
+        case 'ArrowUp':
+            movementModel.dir = 'top';
+            break;
+        case 'ArrowDown':
+            movementModel.dir = 'bottom';
+            break;
+        case 'ArrowLeft':
+            movementModel.dir = 'left';
+            break;
+        case 'ArrowRight':
+            movementModel.dir = 'right';
+            break;
+    }
+})
+
+/**
  *  Инициализация приложения
  */
 function setup() {
@@ -322,6 +469,11 @@ function setup() {
      * Проставление времени в 0
      */
     timerModel.ct = 0;
+
+    /**
+     * Reset Current Level
+     */
+    map = getMap(currentLevel);
 
     /**
      * Запуск рендера
