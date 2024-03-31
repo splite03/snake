@@ -153,9 +153,9 @@ function renderFrame() {
                     /**
                      * Stroke (for dev)
                      */
-                    ctx.strokeStyle = global.fc;
-                    ctx.lineWidth = 2 ?? emptyCellModel.lw;
-                    ctx.strokeRect(x * cellModel.w, y * cellModel.h, cellModel.w, cellModel.h);
+                    // ctx.strokeStyle = global.fc;
+                    // ctx.lineWidth = 2 ?? emptyCellModel.lw;
+                    // ctx.strokeRect(x * cellModel.w, y * cellModel.h, cellModel.w, cellModel.h);
                     break;
                 case 1: // wall
                     ctx.fillStyle = wallModel.fs;
