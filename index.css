@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
+body {
+	height: 100vh;
+	width: 100vw;
+	background: #383838;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+:root{
+	--button-color: rgba(0,0,0,.5);
+}
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	font-family: "Pixelify Sans", sans-serif;
+	font-weight: 700;
+}
+#canvas {
+	background: #577d56;
+}
+.container{
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	border-radius: 10px;
+	background: #1e1e1e;
+}
+.buttons {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 20px;
+}
+button {
+	padding: 6px 12px;
+	font-size: 24px;
+	cursor: pointer;
+	border: unset;
+	border-left: 4px solid var(--button-color);
+	border-bottom: 4px solid var(--button-color);
+}
+button:hover{
+	opacity: .75;
+}
+button:active{
+	opacity: .5;
+	border: unset;
+}
+button.restart {
+	background: indianred;
+	color: white;
+}
+button.pause {
+	background: yellow;
+}
